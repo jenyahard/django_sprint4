@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+sent_emails/
 develop-eggs/
 dist/
 downloads/
@@ -150,3 +151,5 @@ media/
 
 sent_emails/
 
+# изображения
+*.jpg
