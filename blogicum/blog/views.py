@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, UpdateView
 from django.views.generic import DetailView, ListView, View
-from django.db.models import Count
 from django.db.models import QuerySet
 from django.http import HttpResponse, HttpRequest
 from django.http import Http404
@@ -203,7 +202,10 @@ class PostCreateView(LoginRequiredMixin, PostModelMixin, CreateView):
         return super().form_valid(form)
 
 
-class PostDeleteView(LoginRequiredMixin, PostModelMixin, PostIdMixin, DeleteView):
+class PostDeleteView(LoginRequiredMixin,
+                     PostModelMixin,
+                     PostIdMixin,
+                     DeleteView):
     success_url = reverse_lazy('blog:index')
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
