@@ -1,13 +1,18 @@
 from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
+from http import HTTPStatus
 
 
-def page_not_found(request, exception):
-    return render(request, 'pages/404.html', status=404)
+def page_not_found(request: HttpRequest, exception: Exception) -> HttpResponse:
+    return render(request, 'pages/404.html', status=HTTPStatus.NOT_FOUND)
 
 
-def csrf_failure(request, reason=''):
-    return render(request, 'pages/403csrf.html', status=403)
+def csrf_failure(request: HttpRequest, reason: str = '') -> HttpResponse:
+    return render(request, 'pages/403csrf.html', status=HTTPStatus.FORBIDDEN)
 
 
-def e_handler500(request):
-    return render(request, 'pages/500.html', status=500)
+def internal_server_error(request: HttpRequest) -> HttpResponse:
+    return render(request,
+                  'pages/500.html',
+                  status=HTTPStatus.INTERNAL_SERVER_ERROR
+                  )

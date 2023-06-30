@@ -1,8 +1,7 @@
-from django.db import models
-from django.contrib.auth import get_user_model
-
 from core.models import PublishedModel
-from django.contrib.auth.models import User
+
+from django.contrib.auth import get_user_model
+from django.db import models
 
 
 class Category(PublishedModel):
@@ -97,6 +96,7 @@ class Post(PublishedModel):
 
 
 class Comment(models.Model):
+    User = get_user_model()
     text = models.TextField('Текст комментария')
     post = models.ForeignKey(
         Post,
@@ -104,7 +104,9 @@ class Comment(models.Model):
         related_name='comment',
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User,
+                               on_delete=models.CASCADE
+                               )
 
     class Meta:
         ordering = ('created_at',)
