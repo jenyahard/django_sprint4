@@ -22,8 +22,8 @@ urlpatterns = [
     ),
 ]
 
-handler404 = 'core.views.page_not_found'
-handler500 = 'core.views.internal_server_error'
+handler404 = 'pages.views.page_not_found'
+handler500 = 'pages.views.internal_server_error'
 
 if settings.DEBUG:
     import debug_toolbar

@@ -1,7 +1,7 @@
-from core.models import PublishedModel
-
-from django.contrib.auth import get_user_model
 from django.db import models
+from django.contrib.auth import get_user_model
+
+from pages.models import PublishedModel
 
 
 class Category(PublishedModel):
@@ -81,10 +81,11 @@ class Post(PublishedModel):
         verbose_name='Категория',
     )
 
-    image = models.ImageField('Изображение',
-                              upload_to='post_images',
-                              blank=True,
-                              )
+    image = models.ImageField(
+        'Изображение',
+        upload_to='post_images',
+        blank=True,
+    )
 
     class Meta:
         verbose_name = 'публикация'
@@ -104,9 +105,10 @@ class Comment(models.Model):
         related_name='comment',
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User,
-                               on_delete=models.CASCADE
-                               )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ('created_at',)
