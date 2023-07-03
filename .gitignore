@@ -1,3 +1,4 @@
 pip/
 venv/
 static/css/
+sent_emails/
