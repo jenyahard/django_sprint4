@@ -19,12 +19,11 @@ class DispatchNeededMixin:
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         view_name = request.resolver_match.view_name
         dispatch_dict = {
-                'blog:edit_comment': dispatch_comment,
-                'blog:delete_comment': dispatch_comment,
-                #  'blog:edit_post': dispatch_post_edit,
-                'blog:delete_post': dispatch_post_delete,
-                'blog:edit_profile': dispatch_user_edit,
-                         }
+            'blog:edit_comment': dispatch_comment,
+            'blog:delete_comment': dispatch_comment,
+            'blog:delete_post': dispatch_post_delete,
+            'blog:edit_profile': dispatch_user_edit,
+        }
         for view_url in dispatch_dict:
             if view_name == view_url:
                 dispatch_dict[view_url](self, request, *args, **kwargs)
@@ -44,9 +43,9 @@ def dispatch_comment(self, request: HttpRequest, *args, **kwargs):
 #  LoginRequiredMixin, и вроде все работало
 #  Но автотесты не пропускали тога.... Просидел с этим часов 5.
 #  Я в тупике T_T (один dispatch остался во views.py)
-#  Если DispatchNeededMixin наследовать от LoginRequiredMixin 
-#  или его родительских классов, то получается, что все 
-#  остальные диспатчи также наследуются и нужно отдельный 
+#  Если DispatchNeededMixin наследовать от LoginRequiredMixin
+#  или его родительских классов, то получается, что все
+#  остальные диспатчи также наследуются и нужно отдельный
 #  класс писать для dispatch_post_edit. А это много лишнего кода
 #  и проще уже просто 5 строчек во view классе оставить с dispatch
 

@@ -77,10 +77,10 @@ class IndexView(PostMixin, ListView):
     def get_context_data(self, **kwargs) -> dict[str, any]:
         context = super().get_context_data(**kwargs)
         context['page_obj'] = get_paginator(
-                    objects=self.queryset,
-                    page_number=self.request.GET.get('page'),
-                    posts_on_page=AMOUNT_OBJ_ON_ONE_PAGE,
-                    )
+            objects=self.queryset,
+            page_number=self.request.GET.get('page'),
+            posts_on_page=AMOUNT_OBJ_ON_ONE_PAGE,
+        )
         return context
 
 
@@ -118,10 +118,10 @@ class CategoryPostsView(PostMixin, ListView):
                                      slug=category_slug,
                                      is_published=True)
         context['page_obj'] = get_paginator(
-                    objects=context['page_obj'],
-                    page_number=self.request.GET.get('page'),
-                    posts_on_page=AMOUNT_OBJ_ON_ONE_PAGE,
-                    )
+            objects=context['page_obj'],
+            page_number=self.request.GET.get('page'),
+            posts_on_page=AMOUNT_OBJ_ON_ONE_PAGE,
+        )
         context['category'] = category
         return context
 
@@ -135,10 +135,10 @@ class ProfileView(View):
         context = {
             'profile': profile,
             'page_obj': get_paginator(
-                            objects=posts,
-                            page_number=self.request.GET.get('page'),
-                            posts_on_page=AMOUNT_OBJ_ON_ONE_PAGE,
-                            ),
+                objects=posts,
+                page_number=self.request.GET.get('page'),
+                posts_on_page=AMOUNT_OBJ_ON_ONE_PAGE,
+            ),
             'comments': get_comments(profile),
         }
         return render(request, self.template_name, context)
