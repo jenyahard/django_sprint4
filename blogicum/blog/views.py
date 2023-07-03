@@ -21,10 +21,7 @@ from blog.mixins import PostMixin, PostModelMixin
 AMOUNT_OBJ_ON_ONE_PAGE = 10
 
 
-class AddCommentView(LoginRequiredMixin, CreateView):
-    model = Comment
-    form_class = CommentForm
-    template_name = 'blog/comment.html'
+class AddCommentView(LoginRequiredMixin, CommentMixin, CreateView):
 
     def form_valid(self, form: Form) -> HttpResponse:
         post = get_object_or_404(Post, pk=self.kwargs['pk'])
@@ -39,6 +36,7 @@ class AddCommentView(LoginRequiredMixin, CreateView):
 
 
 class EditCommentView(DispatchNeededMixin, CommentMixin, UpdateView):
+    pk_url_kwarg = 'comment_id'
 
     def get_queryset(self) -> QuerySet[Comment]:
         queryset = super().get_queryset()
@@ -56,6 +54,7 @@ class EditCommentView(DispatchNeededMixin, CommentMixin, UpdateView):
 
 
 class DeleteCommentView(DispatchNeededMixin, CommentMixin, DeleteView):
+    pk_url_kwarg = 'comment_id'
 
     def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
@@ -84,13 +83,10 @@ class IndexView(PostMixin, ListView):
         return context
 
 
-class PostDetailView(LoginRequiredMixin, DetailView):
+class PostDetailView(LoginRequiredMixin, DispatchNeededMixin, DetailView):
     model = Post
     template_name = 'blog/detail.html'
     context_object_name = 'post'
-
-    def get_object(self) -> Post:
-        return get_object_or_404(self.model, id=self.kwargs['pk'])
 
     def get_context_data(self, **kwargs) -> dict[str, any]:
         context = super().get_context_data(**kwargs)
@@ -151,16 +147,14 @@ class UserUpdateView(LoginRequiredMixin, DispatchNeededMixin, UpdateView):
     template_name = 'registration/registration_form.html'
 
 
-class PostUpdateView(DispatchNeededMixin,
-                     LoginRequiredMixin,
-                     UpdateView):
+class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/create.html'
     pk_url_kwarg = 'post_id'
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        instance = self.get_object()
+        instance = get_object_or_404(self.model, id=self.kwargs['post_id'])
         if instance.author != request.user:
             return redirect('blog:post_detail', pk=self.kwargs['post_id'])
         return super().dispatch(request, *args, **kwargs)

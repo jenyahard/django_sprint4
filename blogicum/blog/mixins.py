@@ -2,16 +2,10 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.http import Http404
 
 from blog.forms import PostForm, CommentForm
 from blog.models import Post, Comment
-
-
-class CommentMixin:
-    form_class = CommentForm
-    model = Comment
-    template_name = 'blog/comment.html'
-    pk_url_kwarg = 'comment_id'
 
 
 class DispatchNeededMixin:
@@ -21,6 +15,7 @@ class DispatchNeededMixin:
         dispatch_dict = {
             'blog:edit_comment': dispatch_comment,
             'blog:delete_comment': dispatch_comment,
+            'blog:post_detail': dispatch_post_detail,
             'blog:delete_post': dispatch_post_delete,
             'blog:edit_profile': dispatch_user_edit,
         }
@@ -49,12 +44,19 @@ def dispatch_comment(self, request: HttpRequest, *args, **kwargs):
 #  класс писать для dispatch_post_edit. А это много лишнего кода
 #  и проще уже просто 5 строчек во view классе оставить с dispatch
 
+
 #  def dispatch_post_edit(self, request: HttpRequest, *args, **kwargs):
-#      instance = Post.objects.get(pk=self.kwargs['post_id'])
+#      instance = get_object_or_404(self.model, id=self.kwargs['post_id'])
 #      if not request.user.is_authenticated:
-#          return HttpResponseForbidden()
-#      if instance.author != request.user:
 #          return redirect('blog:post_detail', pk=self.kwargs['post_id'])
+#      if instance.author != request.user:
+#          raise Http404
+
+
+def dispatch_post_detail(self, request: HttpRequest, *args, **kwargs):
+    instance = get_object_or_404(self.model, id=self.kwargs['pk'])
+    if instance.is_published is False and request.user != instance.author:
+        raise Http404
 
 
 def dispatch_post_delete(self, request: HttpRequest, *args, **kwargs):
@@ -78,3 +80,9 @@ class PostModelMixin:
     model = Post
     form_class = PostForm
     template_name = 'blog/create.html'
+
+
+class CommentMixin:
+    form_class = CommentForm
+    model = Comment
+    template_name = 'blog/comment.html'
