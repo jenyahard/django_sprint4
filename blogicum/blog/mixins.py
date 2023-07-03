@@ -30,28 +30,6 @@ def dispatch_comment(self, request: HttpRequest, *args, **kwargs):
     if comment.author != request.user:
         raise PermissionDenied
 
-#  Вынести этот dispatch не получилось, т.к.
-#  он конфликтуеи с dispatch, миксина LoginRequiredMixin
-#  А в автотестах нужно, чтобы пользователя проверял
-#  на авторство и на авторизацию одновременно
-#  Пробовал в этот dispatch переписать логику
-#  LoginRequiredMixin, и вроде все работало
-#  Но автотесты не пропускали тога.... Просидел с этим часов 5.
-#  Я в тупике T_T (один dispatch остался во views.py)
-#  Если DispatchNeededMixin наследовать от LoginRequiredMixin
-#  или его родительских классов, то получается, что все
-#  остальные диспатчи также наследуются и нужно отдельный
-#  класс писать для dispatch_post_edit. А это много лишнего кода
-#  и проще уже просто 5 строчек во view классе оставить с dispatch
-
-
-#  def dispatch_post_edit(self, request: HttpRequest, *args, **kwargs):
-#      instance = get_object_or_404(self.model, id=self.kwargs['post_id'])
-#      if not request.user.is_authenticated:
-#          return redirect('blog:post_detail', pk=self.kwargs['post_id'])
-#      if instance.author != request.user:
-#          raise Http404
-
 
 def dispatch_post_detail(self, request: HttpRequest, *args, **kwargs):
     instance = get_object_or_404(self.model, id=self.kwargs['pk'])
